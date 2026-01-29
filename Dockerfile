@@ -1,26 +1,6 @@
-# Stage 1: Build Python environment
-FROM python:3.11-alpine AS python-builder
-
-# Install any Python packages you need here
-RUN pip install --no-cache-dir --target=/python-packages requests
-
-# Stage 2: n8n with Python
+# Use the official n8n image as base
 FROM docker.n8n.io/n8nio/n8n
 
-USER root
-
-# Copy Python from the builder stage
-COPY --from=python:3.11-alpine /usr/local/bin/python3 /usr/local/bin/python3
-COPY --from=python:3.11-alpine /usr/local/bin/python /usr/local/bin/python
-COPY --from=python:3.11-alpine /usr/local/lib/python3.11 /usr/local/lib/python3.11
-COPY --from=python:3.11-alpine /usr/local/bin/pip3 /usr/local/bin/pip3
-COPY --from=python:3.11-alpine /usr/local/bin/pip /usr/local/bin/pip
-
-# Copy any pre-installed Python packages
-COPY --from=python-builder /python-packages /usr/local/lib/python3.11/site-packages
-
-# Create symlinks
-RUN ln -sf /usr/local/bin/python3 /usr/bin/python3 && \
-    ln -sf /usr/local/bin/python3 /usr/bin/python
-
-USER node
+# For Python support in n8n, use external task runner mode instead of internal
+# The internal Python runner is only for debugging and not recommended for production
+# See: https://docs.n8n.io/hosting/configuration/task-runners/#setting-up-external-mode

@@ -3,6 +3,8 @@ services:
     build: .
     container_name: n8n
     restart: unless-stopped
+    ports:
+      - "5678:5678"
 
     environment:
       - TZ=Asia/Jakarta
@@ -25,11 +27,11 @@ services:
       - N8N_LOG_LEVEL=info
       - N8N_LOG_OUTPUT=console
 
+      # Disable Python runner if not needed (it's only for debugging anyway)
+      - N8N_RUNNERS_ENABLED=true
+
     volumes:
       - n8n_data:/home/node/.n8n
-
-    # ports:
-    #   - "5678:5678"
 
 volumes:
   n8n_data:
